@@ -1,5 +1,5 @@
 import java.util.*;
-public class WeekAssignment {
+public class PracticeProblems {
     static class Transaction {
         String id;
         double fee;
