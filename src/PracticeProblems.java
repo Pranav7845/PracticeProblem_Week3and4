@@ -1,127 +1,78 @@
 import java.util.*;
 
 public class PracticeProblems {
-    static class Trade {
-        String id;
-        int volume;
 
-        Trade(String id, int volume) {
-            this.id = id;
-            this.volume = volume;
-        }
-
-        public String toString() {
-            return id + ":" + volume;
-        }
-    }
-
-    static void mergeSort(Trade[] arr, int left, int right) {
-        if (left < right) {
-            int mid = (left + right) / 2;
-
-            mergeSort(arr, left, mid);
-            mergeSort(arr, mid + 1, right);
-
-            merge(arr, left, mid, right);
-        }
-    }
-
-    static void merge(Trade[] arr, int left, int mid, int right) {
-        Trade[] temp = new Trade[right - left + 1];
-
-        int i = left, j = mid + 1, k = 0;
-
-        while (i <= mid && j <= right) {
-            if (arr[i].volume <= arr[j].volume) { // stable
-                temp[k++] = arr[i++];
-            } else {
-                temp[k++] = arr[j++];
+    static int linearSearchFirst(String[] arr, String target) {
+        int comparisons = 0;
+        for (int i = 0; i < arr.length; i++) {
+            comparisons++;
+            if (arr[i].equals(target)) {
+                System.out.println("Linear First Found at index: " + i);
+                System.out.println("Comparisons: " + comparisons);
+                return i;
             }
         }
-
-        while (i <= mid) temp[k++] = arr[i++];
-        while (j <= right) temp[k++] = arr[j++];
-
-        for (i = left, k = 0; i <= right; i++, k++) {
-            arr[i] = temp[k];
-        }
+        System.out.println("Not found (Linear)");
+        return -1;
     }
 
-    static void quickSort(Trade[] arr, int low, int high) {
-        if (low < high) {
-            int pivotIndex = partition(arr, low, high);
-
-            quickSort(arr, low, pivotIndex - 1);
-            quickSort(arr, pivotIndex + 1, high);
+    static int linearSearchLast(String[] arr, String target) {
+        int comparisons = 0, index = -1;
+        for (int i = 0; i < arr.length; i++) {
+            comparisons++;
+            if (arr[i].equals(target)) index = i;
         }
+        System.out.println("Linear Last Found at index: " + index);
+        System.out.println("Comparisons: " + comparisons);
+        return index;
     }
 
-    static int partition(Trade[] arr, int low, int high) {
-        int pivot = arr[high].volume;
-        int i = low - 1;
+    static int binarySearch(String[] arr, String target) {
+        int low = 0, high = arr.length - 1, comparisons = 0;
+        while (low <= high) {
+            comparisons++;
+            int mid = (low + high) / 2;
+            int cmp = arr[mid].compareTo(target);
 
-        for (int j = low; j < high; j++) {
-            if (arr[j].volume > pivot) { // DESC
-                i++;
-                Trade temp = arr[i];
-                arr[i] = arr[j];
-                arr[j] = temp;
-            }
+            if (cmp == 0) {
+                System.out.println("Binary Found at index: " + mid);
+                System.out.println("Comparisons: " + comparisons);
+                return mid;
+            } else if (cmp < 0) low = mid + 1;
+            else high = mid - 1;
         }
-
-        Trade temp = arr[i + 1];
-        arr[i + 1] = arr[high];
-        arr[high] = temp;
-
-        return i + 1;
+        System.out.println("Not found (Binary)");
+        return -1;
     }
 
-    static Trade[] mergeTwoSorted(Trade[] a, Trade[] b) {
-        Trade[] result = new Trade[a.length + b.length];
+    static int countOccurrences(String[] arr, String target, int index) {
+        if (index == -1) return 0;
 
-        int i = 0, j = 0, k = 0;
+        int count = 1, left = index - 1, right = index + 1;
 
-        while (i < a.length && j < b.length) {
-            if (a[i].volume <= b[j].volume) {
-                result[k++] = a[i++];
-            } else {
-                result[k++] = b[j++];
-            }
+        while (left >= 0 && arr[left].equals(target)) {
+            count++;
+            left--;
         }
-
-        while (i < a.length) result[k++] = a[i++];
-        while (j < b.length) result[k++] = b[j++];
-
-        return result;
-    }
-
-    static int totalVolume(Trade[] arr) {
-        int sum = 0;
-        for (Trade t : arr) sum += t.volume;
-        return sum;
+        while (right < arr.length && arr[right].equals(target)) {
+            count++;
+            right++;
+        }
+        return count;
     }
 
     public static void main(String[] args) {
+        String[] logs = {"accB", "accA", "accB", "accC"};
 
-        Trade[] trades = {
-                new Trade("trade3", 500),
-                new Trade("trade1", 100),
-                new Trade("trade2", 300)
-        };
+        linearSearchFirst(logs, "accB");
+        linearSearchLast(logs, "accB");
 
-        Trade[] mergeArr = Arrays.copyOf(trades, trades.length);
-        mergeSort(mergeArr, 0, mergeArr.length - 1);
-        System.out.println("MergeSort (ASC): " + Arrays.toString(mergeArr));
+        Arrays.sort(logs);
+        System.out.println("Sorted Logs: " + Arrays.toString(logs));
 
-        Trade[] quickArr = Arrays.copyOf(trades, trades.length);
-        quickSort(quickArr, 0, quickArr.length - 1);
-        System.out.println("QuickSort (DESC): " + Arrays.toString(quickArr));
+        int index = binarySearch(logs, "accB");
+        int count = countOccurrences(logs, "accB", index);
 
-        Trade[] morning = { new Trade("m1", 100), new Trade("m2", 300) };
-        Trade[] afternoon = { new Trade("a1", 200), new Trade("a2", 400) };
-        Trade[] merged = mergeTwoSorted(morning, afternoon);
-        System.out.println("Merged List: " + Arrays.toString(merged));
-
-        System.out.println("Total Volume: " + totalVolume(merged));
+        System.out.println("Total occurrences: " + count);
     }
 }
