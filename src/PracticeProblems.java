@@ -1,77 +1,123 @@
 import java.util.*;
 
 public class PracticeProblems {
-    static class Client {
-        String name;
-        int riskScore;
-        double accountBalance;
 
-        Client(String name, int riskScore, double accountBalance) {
+    // 🔹 Asset Class
+    static class Asset {
+        String name;
+        double returnRate;
+        double volatility;
+
+        Asset(String name, double returnRate, double volatility) {
             this.name = name;
-            this.riskScore = riskScore;
-            this.accountBalance = accountBalance;
+            this.returnRate = returnRate;
+            this.volatility = volatility;
         }
 
         public String toString() {
-            return name + ":" + riskScore;
+            return name + ":" + returnRate + "%";
         }
     }
-    static void bubbleSort(Client[] arr) {
-        int n = arr.length;
-        int swaps = 0;
 
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < n - i - 1; j++) {
+    // ================= MERGE SORT (ASC, STABLE) =================
+    static void mergeSort(Asset[] arr, int left, int right) {
+        if (left < right) {
+            int mid = (left + right) / 2;
 
-                if (arr[j].riskScore > arr[j + 1].riskScore) {
-                    Client temp = arr[j];
-                    arr[j] = arr[j + 1];
-                    arr[j + 1] = temp;
-                    swaps++;
-                }
+            mergeSort(arr, left, mid);
+            mergeSort(arr, mid + 1, right);
+
+            merge(arr, left, mid, right);
+        }
+    }
+
+    static void merge(Asset[] arr, int left, int mid, int right) {
+        Asset[] temp = new Asset[right - left + 1];
+
+        int i = left, j = mid + 1, k = 0;
+
+        while (i <= mid && j <= right) {
+            if (arr[i].returnRate <= arr[j].returnRate) { // stable
+                temp[k++] = arr[i++];
+            } else {
+                temp[k++] = arr[j++];
             }
         }
 
-        System.out.println("Bubble Sort (Ascending): " + Arrays.toString(arr));
-        System.out.println("Swaps: " + swaps);
+        while (i <= mid) temp[k++] = arr[i++];
+        while (j <= right) temp[k++] = arr[j++];
+
+        for (i = left, k = 0; i <= right; i++, k++) {
+            arr[i] = temp[k];
+        }
     }
-    static void insertionSort(Client[] arr) {
 
-        for (int i = 1; i < arr.length; i++) {
-            Client key = arr[i];
-            int j = i - 1;
+    // ================= QUICK SORT (DESC + VOLATILITY ASC) =================
+    static void quickSort(Asset[] arr, int low, int high) {
+        if (low < high) {
+            int pivotIndex = medianOfThree(arr, low, high);
+            swap(arr, pivotIndex, high);
 
-            while (j >= 0 &&
-                    (arr[j].riskScore < key.riskScore ||
-                            (arr[j].riskScore == key.riskScore &&
-                                    arr[j].accountBalance < key.accountBalance))) {
+            int pi = partition(arr, low, high);
 
-                arr[j + 1] = arr[j];
-                j--;
+            quickSort(arr, low, pi - 1);
+            quickSort(arr, pi + 1, high);
+        }
+    }
+
+    static int partition(Asset[] arr, int low, int high) {
+        Asset pivot = arr[high];
+        int i = low - 1;
+
+        for (int j = low; j < high; j++) {
+
+            if (arr[j].returnRate > pivot.returnRate ||
+                    (arr[j].returnRate == pivot.returnRate &&
+                            arr[j].volatility < pivot.volatility)) {
+
+                i++;
+                swap(arr, i, j);
             }
-
-            arr[j + 1] = key;
         }
 
-        System.out.println("Insertion Sort (DESC): " + Arrays.toString(arr));
+        swap(arr, i + 1, high);
+        return i + 1;
     }
-    static void topRiskClients(Client[] arr) {
-        System.out.println("Top Risk Clients:");
-        int limit = Math.min(10, arr.length);
-        for (int i = 0; i < limit; i++) {
-            System.out.println(arr[i].name + "(" + arr[i].riskScore + ")");
-        }
+
+    // 🔹 Median-of-3 Pivot Selection
+    static int medianOfThree(Asset[] arr, int low, int high) {
+        int mid = (low + high) / 2;
+
+        if (arr[low].returnRate > arr[mid].returnRate) swap(arr, low, mid);
+        if (arr[low].returnRate > arr[high].returnRate) swap(arr, low, high);
+        if (arr[mid].returnRate > arr[high].returnRate) swap(arr, mid, high);
+
+        return mid;
     }
+
+    static void swap(Asset[] arr, int i, int j) {
+        Asset temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+
+    // ================= MAIN =================
     public static void main(String[] args) {
-        Client[] clients = {
-                new Client("clientC", 80, 5000),
-                new Client("clientA", 20, 2000),
-                new Client("clientB", 50, 3000)
+
+        Asset[] assets = {
+                new Asset("AAPL", 12, 5),
+                new Asset("TSLA", 8, 7),
+                new Asset("GOOG", 15, 4)
         };
-        Client[] bubbleArr = Arrays.copyOf(clients, clients.length);
-        bubbleSort(bubbleArr);
-        Client[] insertionArr = Arrays.copyOf(clients, clients.length);
-        insertionSort(insertionArr);
-        topRiskClients(insertionArr);
+
+        // Merge Sort
+        Asset[] mergeArr = Arrays.copyOf(assets, assets.length);
+        mergeSort(mergeArr, 0, mergeArr.length - 1);
+        System.out.println("Merge Sort (ASC): " + Arrays.toString(mergeArr));
+
+        // Quick Sort
+        Asset[] quickArr = Arrays.copyOf(assets, assets.length);
+        quickSort(quickArr, 0, quickArr.length - 1);
+        System.out.println("Quick Sort (DESC): " + Arrays.toString(quickArr));
     }
 }
