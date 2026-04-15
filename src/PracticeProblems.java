@@ -1,21 +1,6 @@
 import java.util.*;
 
 public class PracticeProblems {
-
-
-    static class Transaction {
-        String id;
-        double fee;
-        String timestamp;
-
-        Transaction(String id, double fee, String timestamp) {
-            this.id = id;
-            this.fee = fee;
-            this.timestamp = timestamp;
-        }
-    }
-
-
     static class Client {
         String name;
         int riskScore;
@@ -31,14 +16,13 @@ public class PracticeProblems {
             return name + ":" + riskScore;
         }
     }
-
-
     static void bubbleSort(Client[] arr) {
         int n = arr.length;
         int swaps = 0;
 
         for (int i = 0; i < n - 1; i++) {
             for (int j = 0; j < n - i - 1; j++) {
+
                 if (arr[j].riskScore > arr[j + 1].riskScore) {
                     Client temp = arr[j];
                     arr[j] = arr[j + 1];
@@ -51,9 +35,8 @@ public class PracticeProblems {
         System.out.println("Bubble Sort (Ascending): " + Arrays.toString(arr));
         System.out.println("Swaps: " + swaps);
     }
-
-
     static void insertionSort(Client[] arr) {
+
         for (int i = 1; i < arr.length; i++) {
             Client key = arr[i];
             int j = i - 1;
@@ -72,7 +55,6 @@ public class PracticeProblems {
 
         System.out.println("Insertion Sort (DESC): " + Arrays.toString(arr));
     }
-
     static void topRiskClients(Client[] arr) {
         System.out.println("Top Risk Clients:");
         int limit = Math.min(10, arr.length);
@@ -80,21 +62,16 @@ public class PracticeProblems {
             System.out.println(arr[i].name + "(" + arr[i].riskScore + ")");
         }
     }
-
     public static void main(String[] args) {
-
         Client[] clients = {
                 new Client("clientC", 80, 5000),
                 new Client("clientA", 20, 2000),
                 new Client("clientB", 50, 3000)
         };
-
         Client[] bubbleArr = Arrays.copyOf(clients, clients.length);
         bubbleSort(bubbleArr);
-
         Client[] insertionArr = Arrays.copyOf(clients, clients.length);
         insertionSort(insertionArr);
-
         topRiskClients(insertionArr);
     }
 }
