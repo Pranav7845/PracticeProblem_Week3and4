@@ -2,7 +2,7 @@ import java.util.*;
 
 public class PracticeProblems {
 
-    // UC1 - Transaction Class
+
     static class Transaction {
         String id;
         double fee;
@@ -15,7 +15,7 @@ public class PracticeProblems {
         }
     }
 
-    // UC2 - Client Class
+
     static class Client {
         String name;
         int riskScore;
@@ -32,7 +32,7 @@ public class PracticeProblems {
         }
     }
 
-    // Bubble Sort (Ascending)
+
     static void bubbleSort(Client[] arr) {
         int n = arr.length;
         int swaps = 0;
@@ -52,7 +52,7 @@ public class PracticeProblems {
         System.out.println("Swaps: " + swaps);
     }
 
-    // Insertion Sort (Descending)
+
     static void insertionSort(Client[] arr) {
         for (int i = 1; i < arr.length; i++) {
             Client key = arr[i];
@@ -73,7 +73,6 @@ public class PracticeProblems {
         System.out.println("Insertion Sort (DESC): " + Arrays.toString(arr));
     }
 
-    // Top Risk Clients
     static void topRiskClients(Client[] arr) {
         System.out.println("Top Risk Clients:");
         int limit = Math.min(10, arr.length);
